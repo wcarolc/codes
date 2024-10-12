@@ -203,7 +203,7 @@ img{margin:0;display:block;height:auto;max-width:100%}
   <script id="template-sheet" type="text/x-handlebars-template">
     {{#each []}}
 
-  <div id="post" class="{{this.filters}} teste item">
+  <div id="post" class="{{this.filters}} item">
   <div class="title"> <h1>{{this.headline}}</h1>  </div>
   <div class="rating">
     <div class="photo" onclick="Tumblr.Lightbox.init([{ low_res: '{{this.imageurl}}', high_res: '{{this.imageurl}}' }]);$('body').toggleClass('tumblr_lightbox_active');return false">
