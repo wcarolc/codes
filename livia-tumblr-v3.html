@@ -1,0 +1,325 @@
+<!-- PHOEBE by @venusthms
+
+-------------------------------------------------------------------------
+
+    - do no redistribute any part of this theme or remove the credit
+    - terms of use: venusthms.tumblr.com/terms
+
+    - icons https://fontawesome.com/
+    - filters: https://isotope.metafizzy.co/
+    - more credits https://venusthms.tumblr.com/credits
+
+    - message me if you encounter any problems with this page
+
+------------------------------------------------------------------------>
+
+<!DOCTYPE html>
+<head>
+<title>{Title}</title>
+<link rel="shortcut icon" href="{Favicon}">
+
+<link rel="alternate" type="application/rss+xml" href="{RSS}">
+{block:Description}<meta name="description" content="{MetaDescription}" />{/block:Description}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,400;0,700;1,400;1,700&family=Scada:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="//dl.dropbox.com/s/7donh9k4jonbmw5/venus.css" rel="stylesheet">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script src="https://kit.fontawesome.com/2e832dfefc.js" crossorigin="anonymous"></script>
+<script src="//venusthms.github.io/pages/credit/color.js"></script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.6/handlebars.min.js"></script>
+<script>
+  const sheetID = '1yQGh6jvkeva6LjTvZJmVnvWxEalN9tQcpXwy2xu6Jdg';
+  const sheetTab = 'DATA';
+  const APIkey = 'AIzaSyDsCfblLW5P9DzBguWQPcAUzJd2QQwZi58';
+</script>
+
+<!--SHEET INTEGRATION-->
+<script type="text/javascript">
+
+const url = "https://sheets.googleapis.com/v4/spreadsheets/" + sheetID + "/values/" + sheetTab + "?alt=json&key=" + APIkey + "";
+
+var sortedSheet = {};
+
+const content = {
+    html: function() {
+        return $.getJSON(url).then(function(data) {
+            const entry = data.values;
+            const rows = data.values.length;
+            const columns = data.values[0].length;
+            const cells = rows * columns;
+
+            for (let k = 1; k < rows; k++) {
+                sortedSheet[k] = {};
+                for (let j = 0; j < columns; j++) {
+                    let columnTitle = entry[0][j];
+                    let currentRow = entry[k][j];
+                    sortedSheet[k][columnTitle] = currentRow;
+                }
+            }
+        });
+    }
+};
+
+content.html().done(function(html) {
+    // Inverte a ordem dos posts em sortedSheet
+    var sortedArray = Object.keys(sortedSheet)
+        .map(key => sortedSheet[key]) // Converte sortedSheet em array
+        .reverse(); // Inverte o array
+
+    // Se sortedSheet for um objeto de posts, converta em array e inverta
+    sortedSheet = sortedArray.reduce((acc, curr) => {
+        acc.push(curr); // Adiciona ao acumulador
+        return acc;
+    }, []);
+
+    $.when(replaceKeys(sortedSheet)).then(createContent(sortedSheet));
+});
+
+//apply data to templates
+function createContent(results, templateNum) {
+    $(document).ready(function() {
+        var data = results;
+        for (let i = 0; i < templateList.length; i++) {
+            let source = $(templateList[i][0]).html();
+            let template = Handlebars.compile(source);
+            let html = template(data);
+            $(templateList[i][1]).append(html);
+        }
+        if (typeof contentLoaded === 'undefined') {
+            // Do something if needed
+        } else {
+            contentLoaded();
+        }
+    });
+}
+
+//FORMATING FUNCTIONS
+function replaceKeys(object) {
+    Object.keys(object).forEach(function(key) {
+        var newKey = key.replace(/\s+/g, '').toLowerCase();
+        if (object[key] && typeof object[key] === 'object') {
+            replaceKeys(object[key]);
+        }
+        if (key !== newKey) {
+            object[newKey] = object[key];
+            delete object[key];
+        }
+    });
+}
+
+</script>
+
+<style type="text/css">
+
+* { margin: 0px;}
+figure, img, a {padding: 0px;}
+html, body {height: 100%;}
+
+#all {opacity: 0; transition: .5s;}
+:root{--background:#23272f;--text:#dedede;--box-shadows:rgba(0,0,0,.08);--header:#272d36;--header-text:#dedede;--header-accent:#e1ff2d;--filters:#bbb;--filters-accent:#bfa2e4;--searchbar:#fafafa;--searchbar-text:#bbb;--items:#272d36;--items-borders:#eee;--items-text:#dedede;--items-accent-bg:#272d36;--progress-bar:#e1ff2d;--progress-link:#bfa2e4;--progress-bar-bg:#eee;--header-top-position:50px;--header-height:65px}
+::-moz-selection{background:#eee;color:#000}
+::selection{background:#eee;color:#000}
+iframe.tmblr-iframe{opacity:.4;filter:invert(1) contrast(150%);-webkit-filter:invert(1) contrast(150%);-o-filter:invert(1) contrast(150%);-moz-filter:invert(1) contrast(150%);-ms-filter:invert(1) contrast(150%)}
+iframe.tmblr-iframe:hover{opacity:.6!important}
+body{font-size:13px;font-family:'Karla',sans-serif}
+body{transition-duration:.4s;-moz-transition-duration:.4s;-webkit-transition-duration:.4s;-o-transition-duration:.4}
+.title h1 {font-weight: bold!important; font-size: 1.3em!important;text-transform: capitalize!important;}
+.search input[type=text],#filters button,#sorting button{font-family:'Scada',sans-serif}
+header h1,header a,.search input[type=text],#filters button,#sorting button,.title h1,.rating span,.progress{text-transform:uppercase;letter-spacing:1px}
+header h1,header a,.title h1{font-size:1em}
+.search input[type=text],#filters button,.rating span,.progress,#sorting button{font-size:.9em}
+header{box-shadow:0 6px 6px -4px var(--box-shadows)}
+#post {box-shadow:0 0 4px 1px var(--box-shadows)}
+.title{box-shadow:0 6px 6px -4px var(--box-shadows)}
+.desc a,a,#filters button,#sorting button{cursor:pointer}
+.desc a{color:var(--text);border-bottom:2px solid var(--progress-bar)}
+.desc a:hover{border-bottom:2px solid var(--items-text)}
+#post{margin-bottom:15px}
+#post div:nth-child(2){background:var(--items-accent-bg)}
+.title{justify-content:flex-start;height:auto; padding:10px!important;}
+.title img{height:35px;width:35px;border:1px solid var(--items-borders);border-radius:100%}
+.rating i{margin-right:3px}
+.rating span{letter-spacing:1.5px}
+.rating img:hover {cursor: pointer;}
+.desc{padding:15px;border-bottom:1px solid var(--items-borders);text-align:justify}
+.progress{text-align:center}
+.progress a {color:var(--progress-link);transition-duration:.4s;-moz-transition-duration:.4s;-webkit-transition-duration:.4s;-o-transition-duration:.4s}
+.progress a:hover {color:var(--progress-bar)}
+.bar,.bar-fill{height:5px}
+img{margin:0;display:block;height:auto;max-width:100%}
+.photo img{width:100%}
+.vignette,#vignette{opacity:0}
+.vignette:hover,#vignette:hover{cursor:pointer}
+.tmblr-lightbox,#tumblr_lightbox{background-color:rgba(130,130,130,0.75)!important}
+.lightbox-image,#tumblr_lightbox img{box-shadow:none!important;border-radius:0!important;max-width:none}
+#tumblr_lightbox_caption,.lightbox-caption{color:#fff!important;font-family:inherit;margin-top:1em!important}
+.post-content div.npf_row,.post div.npf_row,body div.npf_row{margin-left:0!important;margin-right:0!important}
+
+</style>
+<link rel="stylesheet" type="text/css" href="//venusthms.github.io/pages/phoebe/style.css">
+</head>
+<body>
+<header>
+<h1>{Title}</h1>
+<a href="/">home</a>
+<a href="#" class="sort-b">about</a>
+<a href="https://linktr.ee/livzzle">contact</a>
+<a href="https://linktr.ee/livzzle">return to main page</a>
+<a href="#" class="filter-b">filter</a>
+<div class="search"><input type="text" class="quicksearch" placeholder="Search..." /></div>
+
+</header>
+
+<div id="filters" class="filter-group">
+  <button class="button selected" data-filter="*">everything</button>
+  <button class="button" data-filter=".recomendacao">recomendação</button>
+  <button class="button" data-filter=".ramal-cultural">o ramal cultural</button>
+  <button class="button" data-filter=".critica">crítica</button>
+  <button class="button" data-filter=".teste">instagram</button>
+</div>
+
+<div id="sorting">  {block:Description}<div id="description">{Description}</div>{/block:Description}</div>
+
+
+<!----- grid starts ----->
+<div class="grid" id="sheet">
+  <div class="grid-sizer"></div>
+
+  <script id="template-sheet" type="text/x-handlebars-template">
+    {{#each []}}
+
+  <div id="post" class="{{this.filters}} item">
+  <div class="title"> <h1>{{this.headline}}</h1>  </div>
+  <div class="rating">
+    <div class="photo" onclick="Tumblr.Lightbox.init([{ low_res: '{{this.imageurl}}', high_res: '{{this.imageurl}}' }]);$('body').toggleClass('tumblr_lightbox_active');return false">
+      <img src="{{this.imageurl}}"></div>
+  </div>
+  <div class="desc"> {{{this.description}}}  </div>
+  <div class="progress">
+    <span><a href="{{this.link}}" target="_blank">saiba mais</a></span>
+    <div class="bar"> <span class="bar-fill" style="width:100%;"></span> </div>
+  </div>
+  </div>
+
+  {{/each}}
+
+  </script>
+
+</div>
+
+<a href="https://venusthms.tumblr.com/" title="venusthms"><div class="venus-icon"></div></a>
+</body>
+
+<link href="//dl.dropbox.com/s/bnoj86mka0bkplb/npf-override.css" rel="stylesheet">
+<script src="//dl.dropbox.com/s/vwrm94pcg4c9e71/npf-evenize.js"></script>
+<script src="//dl.dropbox.com/s/aqo7pinjzfub4tn/npf-legacy.js"></script>
+<script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
+<script src="https://static.tumblr.com/xd6ujov/9Rpouml9f/imagesloaded.pkgd.min.js"></script>
+<script type="text/javascript" src="https://static.tumblr.com/q0etgkr/mFbkoqlkr/tumblrautopager.js"></script>
+
+<script>
+  var templateList = [
+    ['#template-sheet', '#sheet']
+  ];
+
+  const contentLoaded = function(){
+
+    var qsRegex; var buttonFilter;
+
+var $grid = $('.grid').isotope({
+  itemSelector: '#post',
+    masonry: {
+   columnWidth: '.grid-sizer',
+   horizontalOrder: true,
+   gutter:10
+   },
+getSortData: {
+    name: '.title h1',
+  },
+  filter: function() {
+    var $this = $(this);
+    var searchResult = qsRegex ? $this.text().match( qsRegex ) : true;
+    var buttonResult = buttonFilter ? $this.is( buttonFilter ) : true;
+    return searchResult && buttonResult;
+  }
+});
+
+$grid.imagesLoaded().progress(function() {
+  $grid.isotope('layout');
+});
+
+$('#filters').on('click', 'button', function() {
+  buttonFilter = $(this).attr('data-filter');
+  $grid.isotope({ filter: buttonFilter });
+});
+
+var $quicksearch = $('.quicksearch').keyup(debounce(function() {
+  qsRegex = new RegExp($quicksearch.val(), 'gi');
+  $grid.isotope({ filter: function() {
+    var searchResult = qsRegex ? $(this).text().match(qsRegex) : true;
+    var buttonResult = buttonFilter ? $(this).is(buttonFilter) : true;
+    return searchResult && buttonResult;
+  }});
+}, 100));
+
+$('.filter-group').each( function( i, buttonGroup ) {
+  var $buttonGroup = $( buttonGroup );
+  $buttonGroup.on( 'click', 'button', function() {
+    $buttonGroup.find('.selected').removeClass('selected');
+    $( this ).addClass('selected');
+  });
+});
+
+$('#sorting').each( function( i, buttonGroup ) {
+  var $buttonGroup = $( buttonGroup );
+  $buttonGroup.on( 'click', 'button', function() {
+    $buttonGroup.find('.selected').removeClass('selected');
+    $( this ).addClass('selected');
+  });
+});
+
+function debounce( fn, threshold ) {
+  var timeout;
+  threshold = threshold || 100;
+  return function debounced() {
+    clearTimeout( timeout );
+    var args = arguments;
+    var _this = this;
+    function delayed() {
+      fn.apply( _this, args );
+    }
+    timeout = setTimeout( delayed, threshold );
+  };
+}
+$('.filter-b').click(function() {
+    // Verifica se o painel de filtros está visível
+    if ($('#filters').is(':visible')) {
+        $('#filters').slideUp("slow"); // Se estiver visível, esconde
+    } else {
+        $('#filters').slideDown("slow"); // Se não estiver, mostra
+        $("#sorting").fadeOut("slow"); // Esconde o painel de ordenação
+    }
+    $(".sort-b").removeClass("clicked", 1000);
+    $(".filter-b").toggleClass("clicked", 1000);
+    return false;
+});
+
+$('.sort-b').click(function() {
+    // Verifica se o painel de ordenação está visível
+    if ($('#sorting').is(':visible')) {
+        $('#sorting').slideUp("slow"); // Se estiver visível, esconde
+    } else {
+        $('#sorting').slideDown("slow"); // Se não estiver, mostra
+        $("#filters").fadeOut("slow"); // Esconde o painel de filtros
+    }
+    $(".filter-b").removeClass("clicked", 1000);
+    $(".sort-b").toggleClass("clicked", 1000);
+    return false;
+});
+
+  }
+  </script>
+
+</html>
